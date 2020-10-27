@@ -93,7 +93,7 @@ class JinjaIndex(Index):
                 ]
             )
         content = content.items()
-        content.sort(key=lambda k: k[0])
+        sorted(content)
         return (content, True)
 
 
