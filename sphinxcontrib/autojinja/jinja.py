@@ -52,11 +52,14 @@ def parse_jinja_comment(path):
 
     f = open(path, "r")
     contents = f.read()
-    res = re.match(
-        r"\{\#-?(.+?)-?\#\}", contents, flags=re.MULTILINE | re.DOTALL
-    )
-    if res:
-        return res.group(1)
+    # res = re.match(
+    #     r"\{\{\#-?(.+?)-?\#\}\}", contents, flags=re.MULTILINE | re.DOTALL
+    # )
+
+    res = re.compile(r"\{\{\#-?(.+?)-?\#\}\}[\r\n]+([^\r\n]+)", flags=re.MULTILINE | re.DOTALL)
+    ret = res.findall(contents)
+    if ret:
+        return ret
 
     return None
 
@@ -87,13 +90,20 @@ class AutojinjaDirective(Directive):
     def make_rst(self):
         env = self.state.document.settings.env
         path = self.arguments[0]
-        docstring = parse_jinja_comment(
+        parsed = parse_jinja_comment(
             os.path.join(env.config["jinja_template_path"], path)
         )
-        docstring = prepare_docstring(docstring)
-        if docstring is not None and env.config["jinja_template_path"]:
-            for line in jinja_directive(path, docstring):
-                yield line
+
+        if parsed:
+            for comment, macro_function in parsed:
+                if macro_function.startswith("{{%- macro "):
+                    macro_function_signature = macro_function.replace("{{%- macro ","").replace(" -%}}","")
+                    macro_function_name = macro_function_signature.split("(")[0]
+                    docstring = prepare_docstring(comment)
+                    docstring.append(macro_function_signature)
+                    if docstring is not None and env.config["jinja_template_path"]:
+                        for line in jinja_directive(macro_function_name, docstring):
+                            yield line
 
         yield ""
 
@@ -104,6 +114,7 @@ class AutojinjaDirective(Directive):
         for line in self.make_rst():
             result.append(line, "<autojinja>")
         nested_parse_with_titles(self.state, result, node)
+        # result.pprint()
         return node.children
 
 
