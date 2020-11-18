@@ -19,7 +19,9 @@ except ImportError:
     from sphinx.util.compat import Directive
 
 from sphinx.util.nodes import nested_parse_with_titles
-from sphinx.util.docstrings import prepare_docstring
+
+from sphinxcontrib.napoleon import Config
+from sphinxcontrib.napoleon.docstring import GoogleDocstring
 
 from sphinxcontrib import jinjadomain
 
@@ -95,11 +97,13 @@ class AutojinjaDirective(Directive):
         )
 
         if parsed:
+            config = Config(napoleon_use_param=True, napoleon_use_rtype=True)
             for comment, macro_function in parsed:
                 if macro_function.startswith("{{%- macro "):
                     macro_function_signature = macro_function.replace("{{% macro ","").replace("{{%- macro ","").replace(" -%}}","").replace(" %}}","")
                     macro_function_name = macro_function_signature.split("(")[0]
-                    docstring = prepare_docstring(comment)
+
+                    docstring = GoogleDocstring(comment, config).lines()
                     docstring.append(macro_function_signature)
                     if docstring is not None and env.config["jinja_template_path"]:
                         for line in jinja_directive(macro_function_name, docstring):
