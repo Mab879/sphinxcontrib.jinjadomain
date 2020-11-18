@@ -96,7 +96,7 @@ class AutojinjaDirective(Directive):
 
         if parsed:
             for comment, macro_function in parsed:
-                if macro_function.startswith("{{%- macro "):
+                if macro_function.startswith("{{%- macro ") or macro_function.startswith("{{% macro "):
                     macro_function_signature = macro_function.replace("{{% macro ","").replace("{{%- macro ","").replace(" -%}}","").replace(" %}}","")
                     macro_function_name = macro_function_signature.split("(")[0]
                     docstring = prepare_docstring(comment)
