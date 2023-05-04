@@ -102,7 +102,7 @@ class JinjaDomain(Domain):
     name = "jinja"
     label = "jinja"
 
-    object_types = {"template": ObjType("template", "template", "obj")}
+    object_types = {"template": ObjType("template", "template")}
 
     directives = {"template": JinjaResource}
 
