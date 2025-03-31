@@ -11,7 +11,7 @@ You can find the documentation from the following URL:
 http://packages.python.org/sphinxcontrib-jinjadomain/
 """
 
-requires = ["Sphinx>=1.0", "sphinxcontrib-napoleon>=0.7"]
+requires = ["Sphinx>=1.0",]
 
 setup(
     name="sphinxcontrib-jinjadomain",
