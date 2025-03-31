@@ -20,8 +20,8 @@ except ImportError:
 
 from sphinx.util.nodes import nested_parse_with_titles
 
-from sphinxcontrib.napoleon import Config
-from sphinxcontrib.napoleon.docstring import GoogleDocstring
+from sphinx.ext.napoleon import Config
+from sphinx.ext.napoleon.docstring import GoogleDocstring
 
 from sphinxcontrib import jinjadomain
 
